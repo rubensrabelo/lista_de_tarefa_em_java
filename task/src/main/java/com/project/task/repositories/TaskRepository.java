@@ -1,5 +1,8 @@
 package com.project.task.repositories;
 
-public class TaskRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.project.task.models.Task;
+
+public interface TaskRepository extends JpaRepository<Task, Long> {
 }
