@@ -71,7 +71,7 @@ public class Task implements Serializable {
 		this.title = title;
 	}
 
-	public boolean isCompleted() {
+	public boolean getCompleted() {
 		return isCompleted;
 	}
 

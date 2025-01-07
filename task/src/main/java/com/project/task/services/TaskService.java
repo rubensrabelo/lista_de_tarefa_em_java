@@ -59,6 +59,6 @@ public class TaskService {
 
 	private void updateData(Task task, Task taskUpdate) {
 		taskUpdate.setTitle(task.getTitle());
-		taskUpdate.setCompleted(task.isCompleted());
+		taskUpdate.setCompleted(task.getCompleted());
 	}
 }
