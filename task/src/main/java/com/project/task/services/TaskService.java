@@ -46,19 +46,20 @@ public class TaskService {
 		}
 	}
 	
-	public Task update(Long id, Task task) {
+	public Task update(Long id, Task taskUpdate) {
 		try {
-			Task taskUpdate = repository.findById(id)
+			Task task = repository.findById(id)
 					.orElseThrow(() -> new ResourceNotFoundException("Task", id));
 			updateData(task, taskUpdate);
-			return taskUpdate;
+			task = repository.save(task);
+			return task;
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Task", id);
 		}
 	}
 
 	private void updateData(Task task, Task taskUpdate) {
-		taskUpdate.setTitle(task.getTitle());
-		taskUpdate.setCompleted(task.getCompleted());
+		task.setTitle(taskUpdate.getTitle());
+		task.setCompleted(taskUpdate.getCompleted());
 	}
 }
