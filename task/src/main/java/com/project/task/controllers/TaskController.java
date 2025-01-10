@@ -59,6 +59,7 @@ public class TaskController {
 		return ResponseEntity.noContent().build();
 	}
 	
+	// Não está funcionando
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<TaskDTO> update(@PathVariable Long id, @RequestBody Task task) {
 		task = service.update(id, task);
