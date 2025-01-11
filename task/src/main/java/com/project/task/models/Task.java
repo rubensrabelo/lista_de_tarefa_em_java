@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import com.project.task.dto.TaskDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -43,6 +45,12 @@ public class Task implements Serializable {
 		this.isCompleted = false;
 	}
 	
+	public Task(TaskDTO taskDTO) {
+		this.id = taskDTO.id();
+		this.title = taskDTO.title();
+		this.isCompleted = false;
+	}
+
 	@PrePersist
 	protected void onCreate() {
 		this.createdAt = LocalDateTime.now();

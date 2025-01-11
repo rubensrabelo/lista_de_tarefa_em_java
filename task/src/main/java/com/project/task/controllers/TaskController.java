@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.project.task.dto.TaskDTO;
+import com.project.task.dto.TaskUpdateData;
 import com.project.task.models.Task;
 import com.project.task.services.TaskService;
 
@@ -45,9 +46,10 @@ public class TaskController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<TaskDTO> create(@RequestBody Task task) {
+	public ResponseEntity<TaskDTO> create(@RequestBody TaskDTO taskDTO) {
+		Task task = new Task(taskDTO);
 		task = service.create(task);
-		TaskDTO taskDTO = new TaskDTO(task);
+		taskDTO = new TaskDTO(task);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(task.getId()).toUri();
 		return ResponseEntity.created(uri).body(taskDTO);
@@ -59,10 +61,9 @@ public class TaskController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	// Não está funcionando
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<TaskDTO> update(@PathVariable Long id, @RequestBody Task task) {
-		task = service.update(id, task);
+	public ResponseEntity<TaskDTO> update(@PathVariable Long id, @RequestBody TaskUpdateData taskUpdateData) {
+		Task task = service.update(id, taskUpdateData);
 		TaskDTO taskDTO = new TaskDTO(task);
 		return ResponseEntity.ok().body(taskDTO);
 	}
