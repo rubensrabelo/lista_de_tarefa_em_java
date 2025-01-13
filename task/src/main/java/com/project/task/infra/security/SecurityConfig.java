@@ -17,38 +17,27 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
+	
 	@Autowired
 	private CustomUserDetailsService userDetailsService;
-
+	
 	@Autowired
 	SecurityFilter securityFilter;
-
+	
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf(csrf -> {
-			try {
-				csrf.disable()
-						.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-						.authorizeHttpRequests(authorize -> authorize.requestMatchers(HttpMethod.POST, "/auth/login")
-								.permitAll().requestMatchers(HttpMethod.POST, "/auth/register").permitAll().anyRequest()
-								.authenticated())
-						.addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-		return http.build();
+	    http.csrf(csrf -> csrf.disable())
+	        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+	        .authorizeHttpRequests(authorize -> authorize
+	            .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+	            .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+	            .anyRequest().authenticated())
+	        .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+	    return http.build();
 	}
-
+	
 	@Bean
-	PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-
-	@Bean
-	AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-			throws Exception {
+	AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
 		return authenticationConfiguration.getAuthenticationManager();
 	}
 }
