@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.project.task.dto.TaskDTO;
-import com.project.task.dto.TaskUpdateData;
+import com.project.task.dto.task.TaskDTO;
+import com.project.task.dto.task.TaskUpdateData;
 import com.project.task.models.Task;
 import com.project.task.services.TaskService;
 

@@ -1,4 +1,4 @@
-package com.project.task.dto;
+package com.project.task.dto.task;
 
 import com.project.task.models.Task;
 

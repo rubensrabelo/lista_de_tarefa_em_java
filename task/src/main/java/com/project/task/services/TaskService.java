@@ -7,7 +7,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import com.project.task.dto.TaskUpdateData;
+import com.project.task.dto.task.TaskUpdateData;
 import com.project.task.models.Task;
 import com.project.task.repositories.TaskRepository;
 import com.project.task.services.exceptions.DatabaseException;

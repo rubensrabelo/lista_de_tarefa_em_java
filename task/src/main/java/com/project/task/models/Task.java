@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import com.project.task.dto.TaskDTO;
+import com.project.task.dto.task.TaskDTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
