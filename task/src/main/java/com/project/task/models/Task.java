@@ -11,6 +11,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -37,11 +39,16 @@ public class Task implements Serializable {
 	@Column(nullable = false)
 	private LocalDateTime updatedAt;
 	
+	@ManyToOne
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
+	
 	public Task() {
 	}
 	
-	public Task(String title) {
+	public Task(String title, User user) {
 		this.title = title;
+		this.user = user;
 		this.isCompleted = false;
 	}
 	
@@ -79,7 +86,7 @@ public class Task implements Serializable {
 		this.title = title;
 	}
 
-	public boolean getCompleted() {
+	public boolean isCompleted() {
 		return isCompleted;
 	}
 
@@ -101,6 +108,14 @@ public class Task implements Serializable {
 
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	@Override
