@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,8 +32,8 @@ public class TaskController {
 	private TaskService service;
 	
 	@GetMapping
-	public ResponseEntity<List<TaskDTO>> findAll() {
-		List<Task> tasks = service.findAll();
+	public ResponseEntity<List<TaskDTO>> findAllTasksByUser(@AuthenticationPrincipal UserDetails authenticatedUser) {
+		List<Task> tasks = service.findAllTasksByUser(authenticatedUser);
 		List<TaskDTO> tasksDTO = tasks.stream()
 			.map(t -> new TaskDTO(t))
 			.collect(Collectors.toList());
@@ -39,16 +41,16 @@ public class TaskController {
 	}
 	
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<TaskDTO> findById(@PathVariable Long id) {
-		Task task = service.findById(id);
+	public ResponseEntity<TaskDTO> findById(@PathVariable Long id, @AuthenticationPrincipal UserDetails authenticatedUser) {
+		Task task = service.findTaskByUser(id, authenticatedUser);
 		TaskDTO taskDTO = new TaskDTO(task);
 		return ResponseEntity.ok().body(taskDTO);
 	}
 	
 	@PostMapping
-	public ResponseEntity<TaskDTO> create(@RequestBody TaskDTO taskDTO) {
+	public ResponseEntity<TaskDTO> create(@RequestBody TaskDTO taskDTO, @AuthenticationPrincipal UserDetails authenticatedUser) {
 		Task task = new Task(taskDTO);
-		task = service.create(task);
+		task = service.create(task, authenticatedUser);
 		taskDTO = new TaskDTO(task);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(task.getId()).toUri();
@@ -56,14 +58,14 @@ public class TaskController {
 	}
 	
 	@DeleteMapping(value = "/{id}")
-	public ResponseEntity<Void> delete(@PathVariable Long id) {
-		service.delete(id);
+	public ResponseEntity<Void> delete(@PathVariable Long id, @AuthenticationPrincipal UserDetails authenticatedUser) {
+		service.delete(id, authenticatedUser);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<TaskDTO> update(@PathVariable Long id, @RequestBody TaskUpdateData taskUpdateData) {
-		Task task = service.update(id, taskUpdateData);
+	public ResponseEntity<TaskDTO> update(@PathVariable Long id, @RequestBody TaskUpdateData taskUpdateData, @AuthenticationPrincipal UserDetails authenticatedUser) {
+		Task task = service.update(id, taskUpdateData, authenticatedUser);
 		TaskDTO taskDTO = new TaskDTO(task);
 		return ResponseEntity.ok().body(taskDTO);
 	}
