@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.task.dto.task.TaskDTO;
 
 import jakarta.persistence.Column;
@@ -39,6 +40,7 @@ public class Task implements Serializable {
 	@Column(nullable = false)
 	private LocalDateTime updatedAt;
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
