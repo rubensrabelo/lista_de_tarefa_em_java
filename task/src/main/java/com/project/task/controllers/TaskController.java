@@ -66,10 +66,10 @@ public class TaskController {
 		return ResponseEntity.created(uri).body(savedTask);
 	}
 	
-	@PutMapping
-	public ResponseEntity<Task> update(@RequestBody Task taskUpdate, @RequestHeader("Authorization") String authorizationHeader) {
+	@PutMapping(value = "/{id}")
+	public ResponseEntity<Task> update(@PathVariable Long id, @RequestBody Task taskUpdate, @RequestHeader("Authorization") String authorizationHeader) {
 		var user = getUserByToken(authorizationHeader);
-		Task task = taskRepository.findByIdAndUserId(taskUpdate.getId(), user.getId())
+		Task task = taskRepository.findByIdAndUserId(id, user.getId())
 				.orElseThrow(() -> new ResourceNotFoundException(Task.class.getName(), taskUpdate.getId()));
 		updateData(task, taskUpdate);
 		taskRepository.save(task);
@@ -82,7 +82,7 @@ public class TaskController {
 		Task task = taskRepository.findByIdAndUserId(id, user.getId())
 				.orElseThrow(() -> new ResourceNotFoundException(Task.class.getName(), id));
 		taskRepository.delete(task);
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.noContent().build();	
 	}
 
 	private User getUserByToken(String authorizationHeader) {
