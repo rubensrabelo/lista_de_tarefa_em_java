@@ -24,7 +24,7 @@ public class User {
 	private String email;
 	private String password;
 	
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
 	private List<Task> tasks = new ArrayList<>();
 	
 	public User() {
