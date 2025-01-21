@@ -76,5 +76,4 @@ public class TaskService {
 		task.setTitle(taskUpdate.getTitle());
 		task.setCompleted(taskUpdate.isCompleted());
 	}
-	
 }
