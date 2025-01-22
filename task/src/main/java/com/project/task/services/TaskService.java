@@ -61,7 +61,8 @@ public class TaskService {
 		var user = getUserByToken(authorizationHeader);
 		Task task = taskRepository.findByIdAndUserId(id, user.getId())
 				.orElseThrow(() -> new ResourceNotFoundException(Task.class.getName(), id));
-		taskRepository.delete(task);	
+		task.setActive(false);
+		taskRepository.save(task);	
 	}
 
 	private User getUserByToken(String authorizationHeader) {
