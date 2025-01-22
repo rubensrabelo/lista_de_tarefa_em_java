@@ -61,6 +61,7 @@ public class Task implements Serializable {
 		this.id = taskDTO.id();
 		this.title = taskDTO.title();
 		this.isCompleted = false;
+		this.isActive = true;
 	}
 
 	@PrePersist
@@ -68,6 +69,7 @@ public class Task implements Serializable {
 		this.createdAt = LocalDateTime.now();
 		this.updatedAt = LocalDateTime.now();
 		this.isCompleted = false;
+		this.isActive = true;
 	}
 	
 	@PreUpdate
