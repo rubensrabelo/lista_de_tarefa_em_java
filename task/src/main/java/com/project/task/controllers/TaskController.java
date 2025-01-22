@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.project.task.models.Task;
+import com.project.task.dto.task.TaskDTO;
 import com.project.task.services.TaskService;
 
 @RestController
@@ -27,29 +27,29 @@ public class TaskController {
 	private TaskService service;
 	
 	@GetMapping
-	public ResponseEntity<List<Task>> findAllTasksByUserId(@RequestHeader("Authorization") String authorizationHeader) {
-		List<Task> tasks = service.findAllTasksByUserId(authorizationHeader);
-		return ResponseEntity.ok().body(tasks);
+	public ResponseEntity<List<TaskDTO>> findAllTasksByUserId(@RequestHeader("Authorization") String authorizationHeader) {
+		List<TaskDTO> dtos = service.findAllTasksByUserId(authorizationHeader);
+		return ResponseEntity.ok().body(dtos);
 	}
 	
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Task> findTaskByIdAndUserId(@PathVariable Long id, @RequestHeader("Authorization") String authorizationHeader) {
-		Task task = service.findTaskByIdAndUserId(id, authorizationHeader);
-		return ResponseEntity.ok().body(task);
+	public ResponseEntity<TaskDTO> findTaskByIdAndUserId(@PathVariable Long id, @RequestHeader("Authorization") String authorizationHeader) {
+		TaskDTO dto = service.findTaskByIdAndUserId(id, authorizationHeader);
+		return ResponseEntity.ok().body(dto);
 	}
 
 	@PostMapping
-	public ResponseEntity<Task> create(@RequestBody Task task, @RequestHeader("Authorization") String authorizationHeader) {
-		task = service.create(task, authorizationHeader);
+	public ResponseEntity<TaskDTO> create(@RequestBody TaskDTO dto, @RequestHeader("Authorization") String authorizationHeader) {
+		dto = service.create(dto, authorizationHeader);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-				.buildAndExpand(task.getId()).toUri();
-		return ResponseEntity.created(uri).body(task);
+				.buildAndExpand(dto.id()).toUri();
+		return ResponseEntity.created(uri).body(dto);
 	}
 	
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Task> update(@PathVariable Long id, @RequestBody Task task, @RequestHeader("Authorization") String authorizationHeader) {
-		task = service.update(id, task, authorizationHeader);
-		return ResponseEntity.ok().body(task);
+	public ResponseEntity<TaskDTO> update(@PathVariable Long id, @RequestBody TaskDTO dto, @RequestHeader("Authorization") String authorizationHeader) {
+		dto = service.update(id, dto, authorizationHeader);
+		return ResponseEntity.ok().body(dto);
 	}
 	
 	@DeleteMapping(value = "/{id}")
