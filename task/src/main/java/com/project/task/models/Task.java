@@ -34,6 +34,8 @@ public class Task implements Serializable {
 	@Column(nullable = false)
 	private boolean isCompleted;
 	
+	private boolean isActive;
+	
 	@Column(nullable = false, updatable = false)
 	private LocalDateTime createdAt;
 	
@@ -52,6 +54,7 @@ public class Task implements Serializable {
 		this.title = title;
 		this.user = user;
 		this.isCompleted = false;
+		this.isActive = true;
 	}
 	
 	public Task(TaskDTO taskDTO) {
@@ -94,6 +97,14 @@ public class Task implements Serializable {
 
 	public void setCompleted(boolean isCompleted) {
 		this.isCompleted = isCompleted;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 
 	public LocalDateTime getCreatedAt() {
