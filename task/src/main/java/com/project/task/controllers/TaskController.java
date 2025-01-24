@@ -19,8 +19,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.project.task.dto.task.TaskDTO;
 import com.project.task.services.TaskService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @RestController
 @RequestMapping(value = "/tasks")
+@SecurityRequirement(name = "bearer-key")
 public class TaskController {
 	
 	@Autowired
