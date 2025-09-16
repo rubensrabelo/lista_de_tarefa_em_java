@@ -1,27 +1,34 @@
 package com.project.task.models;
 
+import jakarta.persistence.*;
+
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-
 @Entity
 @Table(name = "tb_user")
-public class User {
+public class User implements Serializable {
+
+	@Serial
+	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String name;
+
+	@Column(nullable = false, length = 50)
+	private String firstname;
+
+	@Column(length = 50)
+	private String lastname;
+
+	@Column(nullable = false, unique = true, length = 100)
 	private String email;
 	private String password;
+	private boolean isActive;
 	
 	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
 	private List<Task> tasks = new ArrayList<>();
@@ -29,11 +36,17 @@ public class User {
 	public User() {
 	}
 
-	public User(Long id, String name, String email, String password) {
-		this.id = id;
-		this.name = name;
+	public User(String firstname, String lastname, String email, String password) {
+		this.firstname = firstname;
+		this.lastname = lastname;
 		this.email = email;
 		this.password = password;
+		this.isActive = true;
+	}
+
+	@PrePersist
+	protected void onCreate() {
+		this.isActive = true;
 	}
 
 	public Long getId() {
@@ -44,12 +57,20 @@ public class User {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getFirstname() {
+		return firstname;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
+	}
+
+	public String getLastname() {
+		return lastname;
+	}
+
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
 	}
 
 	public String getEmail() {
@@ -68,29 +89,23 @@ public class User {
 		this.password = password;
 	}
 
-	public List<Task> getTasks() {
-		return tasks;
+	public boolean isActive() {
+		return isActive;
 	}
 
-	public void setTasks(List<Task> tasks) {
-		this.tasks = tasks;
+	public void setActive(boolean active) {
+		isActive = active;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == null || getClass() != o.getClass()) return false;
+		User user = (User) o;
+		return isActive == user.isActive && Objects.equals(id, user.id) && Objects.equals(firstname, user.firstname) && Objects.equals(lastname, user.lastname) && Objects.equals(email, user.email) && Objects.equals(password, user.password);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(email, id, name, password);
+		return Objects.hash(id, firstname, lastname, email, password, isActive);
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		User other = (User) obj;
-		return Objects.equals(email, other.email) && Objects.equals(id, other.id) && Objects.equals(name, other.name)
-				&& Objects.equals(password, other.password);
-	}	
 }

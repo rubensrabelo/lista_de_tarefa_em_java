@@ -1,27 +1,18 @@
 package com.project.task.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.task.dto.task.TaskDTO;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
-
 @Entity
 @Table(name = "tb_task")
 public class Task implements Serializable {
-	
+
+	@Serial
 	private static final long serialVersionUID = 1L;
 	
 	@Id
@@ -53,13 +44,6 @@ public class Task implements Serializable {
 	public Task(String title, User user) {
 		this.title = title;
 		this.user = user;
-		this.isCompleted = false;
-		this.isActive = true;
-	}
-	
-	public Task(TaskDTO taskDTO) {
-		this.id = taskDTO.id();
-		this.title = taskDTO.title();
 		this.isCompleted = false;
 		this.isActive = true;
 	}
