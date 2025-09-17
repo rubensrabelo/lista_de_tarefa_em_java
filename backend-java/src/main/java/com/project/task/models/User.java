@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,8 +28,16 @@ public class User implements Serializable {
 
 	@Column(nullable = false, unique = true, length = 100)
 	private String email;
+
+	@Column(nullable = false)
 	private String password;
 	private boolean isActive;
+
+	@Column(nullable = false, updatable = false)
+	private LocalDateTime createdAt;
+
+	@Column(nullable = false)
+	private LocalDateTime updatedAt;
 	
 	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
 	private List<Task> tasks = new ArrayList<>();
@@ -46,7 +55,14 @@ public class User implements Serializable {
 
 	@PrePersist
 	protected void onCreate() {
+		this.createdAt = LocalDateTime.now();
+		this.updatedAt = LocalDateTime.now();
 		this.isActive = true;
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		this.updatedAt = LocalDateTime.now();
 	}
 
 	public Long getId() {
@@ -97,15 +113,39 @@ public class User implements Serializable {
 		isActive = active;
 	}
 
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public List<Task> getTasks() {
+		return tasks;
+	}
+
+	public void setTasks(List<Task> tasks) {
+		this.tasks = tasks;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (o == null || getClass() != o.getClass()) return false;
 		User user = (User) o;
-		return isActive == user.isActive && Objects.equals(id, user.id) && Objects.equals(firstname, user.firstname) && Objects.equals(lastname, user.lastname) && Objects.equals(email, user.email) && Objects.equals(password, user.password);
+		return isActive == user.isActive && Objects.equals(id, user.id) && Objects.equals(firstname, user.firstname) && Objects.equals(lastname, user.lastname) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(createdAt, user.createdAt) && Objects.equals(updatedAt, user.updatedAt);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, firstname, lastname, email, password, isActive);
+		return Objects.hash(id, firstname, lastname, email, password, isActive, createdAt, updatedAt);
 	}
 }
