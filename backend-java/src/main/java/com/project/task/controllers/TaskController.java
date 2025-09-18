@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.project.task.dto.task.TaskDTO;
+import com.project.task.dto.task.TaskResponseDTO;
 import com.project.task.services.TaskService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -30,19 +30,19 @@ public class TaskController {
 	private TaskService service;
 	
 	@GetMapping
-	public ResponseEntity<List<TaskDTO>> findAllTasksByUserId(@RequestHeader("Authorization") String authorizationHeader) {
-		List<TaskDTO> dtos = service.findAllTasksByUserId(authorizationHeader);
+	public ResponseEntity<List<TaskResponseDTO>> findAllTasksByUserId(@RequestHeader("Authorization") String authorizationHeader) {
+		List<TaskResponseDTO> dtos = service.findAllTasksByUserId(authorizationHeader);
 		return ResponseEntity.ok().body(dtos);
 	}
 	
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<TaskDTO> findTaskByIdAndUserId(@PathVariable Long id, @RequestHeader("Authorization") String authorizationHeader) {
-		TaskDTO dto = service.findTaskByIdAndUserId(id, authorizationHeader);
+	public ResponseEntity<TaskResponseDTO> findTaskByIdAndUserId(@PathVariable Long id, @RequestHeader("Authorization") String authorizationHeader) {
+		TaskResponseDTO dto = service.findTaskByIdAndUserId(id, authorizationHeader);
 		return ResponseEntity.ok().body(dto);
 	}
 
 	@PostMapping
-	public ResponseEntity<TaskDTO> create(@RequestBody TaskDTO dto, @RequestHeader("Authorization") String authorizationHeader) {
+	public ResponseEntity<TaskResponseDTO> create(@RequestBody TaskResponseDTO dto, @RequestHeader("Authorization") String authorizationHeader) {
 		dto = service.create(dto, authorizationHeader);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(dto.id()).toUri();
@@ -50,7 +50,7 @@ public class TaskController {
 	}
 	
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<TaskDTO> update(@PathVariable Long id, @RequestBody TaskDTO dto, @RequestHeader("Authorization") String authorizationHeader) {
+	public ResponseEntity<TaskResponseDTO> update(@PathVariable Long id, @RequestBody TaskResponseDTO dto, @RequestHeader("Authorization") String authorizationHeader) {
 		dto = service.update(id, dto, authorizationHeader);
 		return ResponseEntity.ok().body(dto);
 	}

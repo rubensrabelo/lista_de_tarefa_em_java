@@ -3,11 +3,12 @@ package com.project.task.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.project.task.dto.task.TaskDTO;
+import com.project.task.dto.task.TaskResponseDTO;
 import com.project.task.infra.security.TokenService;
 import com.project.task.models.Task;
 import com.project.task.models.User;
@@ -21,49 +22,56 @@ public class TaskService {
 	private final TokenService tokenService;
 	private final TaskRepository taskRepository;
 	private final UserRepository userRepository;
+	private final ModelMapper modelMapper;
 
-	public TaskService(TaskRepository taskRepository, UserRepository userRepository, TokenService tokenService) {
+	public TaskService(
+			TaskRepository taskRepository,
+			UserRepository userRepository,
+			TokenService tokenService,
+			ModelMapper modelMapper
+	) {
 		this.taskRepository = taskRepository;
 		this.userRepository = userRepository;
 		this.tokenService = tokenService;
+		this.modelMapper = modelMapper;
 	}
 	
-	public List<TaskDTO> findAllTasksByUserId(String authorizationHeader) {
+	public List<TaskResponseDTO> findAllTasksByUserId(String authorizationHeader) {
 		var user = getUserByToken(authorizationHeader);
 		List<Task> entities = taskRepository.findByUserId(user.getId());
-		List<TaskDTO> dtos = entities.stream()
-								.map(e -> new TaskDTO(e))
+		List<TaskResponseDTO> dtos = entities.stream()
+								.map(e -> new TaskResponseDTO(e))
 								.collect(Collectors.toList());
 		return dtos;
 	}
 	
-	public TaskDTO findTaskByIdAndUserId(Long id, String authorizationHeader) {
+	public TaskResponseDTO findTaskByIdAndUserId(Long id, String authorizationHeader) {
 		var user = getUserByToken(authorizationHeader);
 		Task entity = taskRepository.findByIdAndUserId(id, user.getId())
 				.orElseThrow(() -> new ResourceNotFoundException(Task.class.getName(), id));
-		TaskDTO dto = new TaskDTO(entity);
+		TaskResponseDTO dto = new TaskResponseDTO(entity);
 		return dto;
 	}
 
-	public TaskDTO create(TaskDTO dto, String authorizationHeader) {
+	public TaskResponseDTO create(TaskResponseDTO dto, String authorizationHeader) {
 		
 		var user = getUserByToken(authorizationHeader);
 		var entity = new Task(dto);
 		entity.setUser(user);
 		entity = taskRepository.save(entity);
-		dto = new TaskDTO(entity);
+		dto = new TaskResponseDTO(entity);
 		
 		return dto;
 	}
 	
-	public TaskDTO update(Long id, TaskDTO dto, String authorizationHeader) {
+	public TaskResponseDTO update(Long id, TaskResponseDTO dto, String authorizationHeader) {
 		var user = getUserByToken(authorizationHeader);
 		Task entity = taskRepository.findByIdAndUserId(id, user.getId())
 				.orElseThrow(() -> new ResourceNotFoundException(Task.class.getName(), id));
 		Task update = new Task(dto);
 		updateData(entity, update);
 		taskRepository.save(entity);
-		dto = new TaskDTO(entity);
+		dto = new TaskResponseDTO(entity);
 		return dto;
 	}
 	
