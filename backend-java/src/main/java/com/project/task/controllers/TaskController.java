@@ -4,16 +4,14 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.project.task.dto.task.TaskResponseDTO;
@@ -26,12 +24,22 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @SecurityRequirement(name = "bearer-key")
 public class TaskController {
 	
-	@Autowired
-	private TaskService service;
-	
-	@GetMapping
-	public ResponseEntity<List<TaskResponseDTO>> findAllTasksByUserId(@RequestHeader("Authorization") String authorizationHeader) {
-		List<TaskResponseDTO> dtos = service.findAllTasksByUserId(authorizationHeader);
+	private final TaskService service;
+
+	public TaskController(TaskService service) {
+		this.service = service;
+	}
+
+	@GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<Page<TaskResponseDTO>> findAllTasksByUserId(
+			@RequestParam(value = "page", defaultValue = "0") Integer page,
+			@RequestParam(value = "size", defaultValue = "10") Integer size,
+			@RequestParam(value = "direction", defaultValue = "asc") String direction,
+			@RequestHeader("Authorization") String authorizationHeader
+	) {
+		var sortDirection = direction.equalsIgnoreCase("asc") ? Direction.ASC : Direction.DESC;
+		Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "createdAt"));
+		Page<TaskResponseDTO> dtos = service.findAll(pageable, authorizationHeader);
 		return ResponseEntity.ok().body(dtos);
 	}
 	

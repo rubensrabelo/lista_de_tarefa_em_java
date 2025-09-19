@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -36,15 +39,16 @@ public class TaskService {
 		this.modelMapper = modelMapper;
 	}
 	
-	public List<TaskResponseDTO> findAllTasksByUserId(String authorizationHeader) {
-		var user = getUserByToken(authorizationHeader);
-		List<Task> entities = taskRepository.findByUserId(user.getId());
-		List<TaskResponseDTO> dtos = entities.stream()
-								.map(e -> new TaskResponseDTO(e))
-								.collect(Collectors.toList());
-		return dtos;
+	public Page<TaskResponseDTO> findAll(Pageable pageable, String authorizationHeader) {
+		User user = getUserByToken(authorizationHeader);
+		Page<Task> entities = taskRepository.findByUserId(user.getId(), pageable);
+
+		return entities.map(
+				entity -> modelMapper.map(entity, TaskResponseDTO.class)
+		);
 	}
-	
+
+	// Falta o restante, estou fzndo um e atualizando o controller tbm
 	public TaskResponseDTO findTaskByIdAndUserId(Long id, String authorizationHeader) {
 		var user = getUserByToken(authorizationHeader);
 		Task entity = taskRepository.findByIdAndUserId(id, user.getId())

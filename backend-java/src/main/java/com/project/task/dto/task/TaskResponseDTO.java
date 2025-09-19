@@ -1,6 +1,7 @@
 package com.project.task.dto.task;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.task.dto.user.UserResponseDTO;
 import com.project.task.models.Task;
 import com.project.task.models.User;
 import jakarta.persistence.*;
@@ -17,7 +18,7 @@ public class TaskResponseDTO {
 	private boolean isActive;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
-	private User user;
+	private UserResponseDTO user;
 
 	public TaskResponseDTO(Long id, String title, boolean isCompleted, boolean isActive, LocalDateTime createdAt, LocalDateTime updatedAt) {
 		this.id = id;
@@ -76,11 +77,11 @@ public class TaskResponseDTO {
 		this.updatedAt = updatedAt;
 	}
 
-	public User getUser() {
+	public UserResponseDTO getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(UserResponseDTO user) {
 		this.user = user;
 	}
 
