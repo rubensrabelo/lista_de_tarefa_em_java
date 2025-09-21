@@ -1,23 +1,20 @@
 package com.project.task.services;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PagedModel;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
+import com.project.task.dto.task.TaskCreateDTO;
 import com.project.task.dto.task.TaskResponseDTO;
+import com.project.task.dto.task.TaskUpdateDTO;
 import com.project.task.infra.security.TokenService;
 import com.project.task.models.Task;
 import com.project.task.models.User;
 import com.project.task.repositories.TaskRepository;
 import com.project.task.repositories.UserRepository;
 import com.project.task.services.exceptions.ResourceNotFoundException;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class TaskService {
@@ -48,51 +45,48 @@ public class TaskService {
 		);
 	}
 
-	// Falta o restante, estou fzndo um e atualizando o controller tbm
-	public TaskResponseDTO findTaskByIdAndUserId(Long id, String authorizationHeader) {
-		var user = getUserByToken(authorizationHeader);
+	public TaskResponseDTO findById(Long id, String authorizationHeader) {
+		User user = getUserByToken(authorizationHeader);
 		Task entity = taskRepository.findByIdAndUserId(id, user.getId())
 				.orElseThrow(() -> new ResourceNotFoundException(Task.class.getName(), id));
-		TaskResponseDTO dto = new TaskResponseDTO(entity);
-		return dto;
+		return modelMapper.map(entity, TaskResponseDTO.class);
 	}
 
-	public TaskResponseDTO create(TaskResponseDTO dto, String authorizationHeader) {
-		
-		var user = getUserByToken(authorizationHeader);
-		var entity = new Task(dto);
+	public TaskResponseDTO create(TaskCreateDTO dto, String authorizationHeader) {
+		User user = getUserByToken(authorizationHeader);
+		Task entity = modelMapper.map(dto, Task.class);
 		entity.setUser(user);
+
 		entity = taskRepository.save(entity);
-		dto = new TaskResponseDTO(entity);
-		
-		return dto;
+
+		return modelMapper.map(entity, TaskResponseDTO.class);
 	}
-	
-	public TaskResponseDTO update(Long id, TaskResponseDTO dto, String authorizationHeader) {
-		var user = getUserByToken(authorizationHeader);
+
+	public TaskResponseDTO update(Long id, TaskUpdateDTO dto, String authorizationHeader) {
+		User user = getUserByToken(authorizationHeader);
 		Task entity = taskRepository.findByIdAndUserId(id, user.getId())
 				.orElseThrow(() -> new ResourceNotFoundException(Task.class.getName(), id));
-		Task update = new Task(dto);
+
+		Task update = modelMapper.map(dto, Task.class);
 		updateData(entity, update);
+
 		taskRepository.save(entity);
-		dto = new TaskResponseDTO(entity);
-		return dto;
+		return modelMapper.map(entity, TaskResponseDTO.class);
 	}
-	
+
 	public void delete(Long id, String authorizationHeader) {
-		var user = getUserByToken(authorizationHeader);
+		User user = getUserByToken(authorizationHeader);
 		Task task = taskRepository.findByIdAndUserId(id, user.getId())
 				.orElseThrow(() -> new ResourceNotFoundException(Task.class.getName(), id));
 		task.setActive(false);
-		taskRepository.save(task);	
+		taskRepository.save(task);
 	}
 
 	private User getUserByToken(String authorizationHeader) {
 		String token = authorizationHeader.replace("Bearer ", "");
-        var login = this.tokenService.validateToken(token);   
-		User user = userRepository.findByEmail(login)
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-		return user;
+        var login = this.tokenService.validateToken(token);
+        return userRepository.findByEmail(login)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 	}
 	
 	private void updateData(Task entity, Task update) {
