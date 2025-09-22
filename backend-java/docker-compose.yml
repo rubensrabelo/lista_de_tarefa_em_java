@@ -1,0 +1,29 @@
+services:
+  task:
+    build: .
+    container_name: task
+    depends_on:
+      - db
+    networks:
+      - task-network
+
+  db:
+    image: postgres:15-alpine
+    container_name: postgres-task
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: db_task
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_task_data:/var/lib/postgresql/data
+    networks:
+      - task-network
+
+networks:
+  task-network:
+    external: true
+
+volumes:
+  postgres_task_data:
