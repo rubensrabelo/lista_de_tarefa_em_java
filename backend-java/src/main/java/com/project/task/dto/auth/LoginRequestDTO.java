@@ -1,4 +1,4 @@
-package com.project.task.dto.user;
+package com.project.task.dto.auth;
 
 public record LoginRequestDTO(String email, String password) {
 }

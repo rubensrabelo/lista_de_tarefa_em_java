@@ -19,25 +19,22 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class TaskService {
 	
-	private final TokenService tokenService;
 	private final TaskRepository taskRepository;
-	private final UserRepository userRepository;
+	private final UserService userService;
 	private final ModelMapper modelMapper;
 
 	public TaskService(
 			TaskRepository taskRepository,
-			UserRepository userRepository,
-			TokenService tokenService,
+			UserService userService,
 			ModelMapper modelMapper
 	) {
 		this.taskRepository = taskRepository;
-		this.userRepository = userRepository;
-		this.tokenService = tokenService;
+		this.userService = userService;
 		this.modelMapper = modelMapper;
 	}
 	
 	public Page<TaskResponseDTO> findAll(Pageable pageable, String authorizationHeader) {
-		User user = getUserByToken(authorizationHeader);
+		User user = userService.getUserByToken(authorizationHeader);
 		Page<Task> entities = taskRepository.findByUserId(user.getId(), pageable);
 
 		return entities.map(
@@ -46,14 +43,14 @@ public class TaskService {
 	}
 
 	public TaskResponseDTO findById(Long id, String authorizationHeader) {
-		User user = getUserByToken(authorizationHeader);
+		User user = userService.getUserByToken(authorizationHeader);
 		Task entity = taskRepository.findByIdAndUserId(id, user.getId())
 				.orElseThrow(() -> new ResourceNotFoundException(Task.class.getName(), id));
 		return modelMapper.map(entity, TaskResponseDTO.class);
 	}
 
 	public TaskResponseDTO create(TaskCreateDTO dto, String authorizationHeader) {
-		User user = getUserByToken(authorizationHeader);
+		User user = userService.getUserByToken(authorizationHeader);
 		Task entity = modelMapper.map(dto, Task.class);
 		entity.setUser(user);
 
@@ -63,7 +60,7 @@ public class TaskService {
 	}
 
 	public TaskResponseDTO update(Long id, TaskUpdateDTO dto, String authorizationHeader) {
-		User user = getUserByToken(authorizationHeader);
+		User user = userService.getUserByToken(authorizationHeader);
 		Task entity = taskRepository.findByIdAndUserId(id, user.getId())
 				.orElseThrow(() -> new ResourceNotFoundException(Task.class.getName(), id));
 
@@ -75,18 +72,11 @@ public class TaskService {
 	}
 
 	public void delete(Long id, String authorizationHeader) {
-		User user = getUserByToken(authorizationHeader);
+		User user = userService.getUserByToken(authorizationHeader);
 		Task task = taskRepository.findByIdAndUserId(id, user.getId())
 				.orElseThrow(() -> new ResourceNotFoundException(Task.class.getName(), id));
 		task.setActive(false);
 		taskRepository.save(task);
-	}
-
-	private User getUserByToken(String authorizationHeader) {
-		String token = authorizationHeader.replace("Bearer ", "");
-        var login = this.tokenService.validateToken(token);
-        return userRepository.findByEmail(login)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 	}
 	
 	private void updateData(Task entity, Task update) {

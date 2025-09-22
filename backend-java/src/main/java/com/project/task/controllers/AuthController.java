@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.task.dto.user.LoginRequestDTO;
+import com.project.task.dto.auth.LoginRequestDTO;
 import com.project.task.dto.user.RegisterRequestDTO;
 import com.project.task.infra.security.TokenService;
 import com.project.task.models.User;
