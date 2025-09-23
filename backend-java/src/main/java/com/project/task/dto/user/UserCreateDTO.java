@@ -1,16 +1,16 @@
 package com.project.task.dto.user;
 
-public class RegisterRequestDTO {
+public class UserCreateDTO {
 
 	private String firstname;
 	private String lastname;
 	private String email;
 	private String password;
 
-	public RegisterRequestDTO() {
+	public UserCreateDTO() {
 	}
 
-	public RegisterRequestDTO(String firstname, String lastname, String email, String password) {
+	public UserCreateDTO(String firstname, String lastname, String email, String password) {
 		this.firstname = firstname;
 		this.lastname = lastname;
 		this.email = email;
