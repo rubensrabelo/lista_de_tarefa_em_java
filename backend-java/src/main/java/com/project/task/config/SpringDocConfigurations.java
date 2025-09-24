@@ -1,4 +1,4 @@
-package com.project.task.infra.springdoc;
+package com.project.task.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
