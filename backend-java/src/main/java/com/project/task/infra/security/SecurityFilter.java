@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -26,14 +27,20 @@ public class SecurityFilter extends OncePerRequestFilter {
 
 	private static final Logger logger = LoggerFactory.getLogger(SecurityFilter.class);
 
-	@Autowired
 	TokenService tokenService;
-
-	@Autowired
 	UserRepository userRepository;
 
+	public SecurityFilter(TokenService tokenService, UserRepository userRepository) {
+		this.tokenService = tokenService;
+		this.userRepository = userRepository;
+	}
+
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+	protected void doFilterInternal(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			FilterChain filterChain
+	)
 			throws ServletException, IOException {
 
 		var token = this.recoverToken(request);
@@ -48,7 +55,8 @@ public class SecurityFilter extends OncePerRequestFilter {
 
 		if (login != null) {
 			logger.info("Token validated for user: {}", login);
-			User user = userRepository.findByEmail(login).orElseThrow(() -> new ResourceNotFoundException(login));
+			User user = userRepository.findByEmail(login)
+					.orElseThrow(() -> new UsernameNotFoundException("User not found: " + login));
 			var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
 			var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
