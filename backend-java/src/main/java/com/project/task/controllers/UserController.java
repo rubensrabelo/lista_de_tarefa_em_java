@@ -5,6 +5,9 @@ import com.project.task.dto.user.UserResponseDTO;
 import com.project.task.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping(value = "/users")
@@ -19,7 +22,9 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserResponseDTO> register(@RequestBody UserCreateDTO dtoRegister) {
         UserResponseDTO dtoResponse = userService.register(dtoRegister);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(dtoResponse.getId()).toUri();
 
-        return ResponseEntity.ok().body(dtoResponse);
+        return ResponseEntity.created(uri).body(dtoResponse);
     }
 }
